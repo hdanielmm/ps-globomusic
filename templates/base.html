@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>GloboMusic</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+    <nav class="navbar navbar-dark sticky-top bg-info flex-md-nowrap p-0">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{{ url_for('home') }}">GloboMusic</a>
+      {% if current_user.is_authenticated %}
+      <span class="navbar-brand col-sm-3 col-md-3 mr-0">{{ _('You are logged in as') }} {{ current_user.username }}!</span>
+      {% endif %}
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              {% if current_user.is_anonymous %}
+              <li class="nav-item">
+                <a class="nav-link {{ 'active' if active_page == 'home' }}" href="{{ url_for('home') }}">
+                  {{ _('Home') }}
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {{ 'active' if active_page == 'login' }}" href="{{ url_for('login') }}">
+                  {{ _('Login') }}
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {{ 'active' if active_page == 'register' }}" href="{{ url_for('register') }}">
+                  {{ _('Register') }}
+                </a>
+              </li>
+              {% else %}
+              <li class="nav-item">
+                <a class="nav-link {{ 'active' if active_page == 'albums' }}" href="{{ url_for('list_albums') }}">
+                  {{ _('See albums') }}
+                </a>
+              </li>
+              <li class="nav-item mb-2">
+                <a class="nav-link {{ 'active' if active_page == 'tours' }}" href="{{ url_for('list_tours') }}">
+                  {{ _('See tours') }}
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {{ 'active' if active_page == 'new_album' }}" href="{{ url_for('create_album') }}">
+                  {{ _('Upload new album') }}
+                </a>
+              </li>
+              <li class="nav-item mb-2">
+                <a class="nav-link {{ 'active' if active_page == 'new_tour' }}" href="{{ url_for('create_tour') }}">
+                  {{ _('Upload new tour') }}
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('logout') }}">
+                  {{ _('Logout') }}
+                </a>
+              </li>
+              {% endif %}
+            </ul>
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+            <h1 class="h2">{% block headline %}{% endblock %}</h1>
+          </div>
+          {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+              {% for type, content in messages %}
+                <div class="alert alert-{{ type }} alert-dismissible my-4" role="alert">
+                  <button type="button" class="close"
+                          data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                  {{ content }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+          {% block content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  </body>
+</html>

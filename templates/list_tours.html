@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% set active_page = 'tours' %}
+{% block headline %}
+  {{ _('Check out these tours') }}
+{% endblock %}
+
+{% block content %}
+{% if tours %}
+{% for tour in tours %}
+<div class="card text-center mt-3 mb-3">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-4">
+        <h5 class="card-title"><a href="{{ url_for('show_tour', slug=tour.slug) }}">{{ tour.title }}</a></h5>
+        <p class="card-text">{{ tour.artist }}</p>
+      </div>
+      <div class="col-md-4">
+        <p class="card-text">{{ tour.description }}</p>
+        <p class="card-text">{{ tour.genre }}</p>
+      </div>
+      <div class="col-md-4">
+        <p class="card-text"><b>{{ _('From') }}</b> {{ tour.start_date | date_format }} <b>{{ _('to') }}</b> {{ tour.end_date | date_format }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer text-muted">
+    {% if current_user.is_tour_owner(tour) %}
+    {{ _('Posted by you') }}
+    {% else %}
+    {{ _('Posted by') }} {{ tour.user.username }}
+    {% endif %}
+  </div>
+</div>
+{% endfor %}
+{% else %}
+{{ _('There are no tours to show.') }}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block headline %}Album "{{ album.title }}"{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-5">
+    <div class="embed-responsive embed-responsive-1by1">
+       <img class="embed-responsive-item" style="object-fit: cover" src="{{ url_for('uploads', filename=album.image) }}" alt="">
+     </div>
+  </div>
+  <div class="col-md-5">
+    <p><b>{{ _('Title') }}: </b>{{ album.title }}</p>
+    <p><b>{{ _('Artist') }}: </b>{{ album.artist }}</p>
+    <p><b>{{ _('Description') }}: </b>{{ album.description }}</p>
+    <p><b>{{ _('Genre') }}: </b>{{ album.genre }}</p>
+    <p><b>{{ _('Release date') }}: </b>{{ album.release_date | date_format }}</p>
+    {% if current_user.is_album_owner(album) %}
+    <a class="btn btn-info" href="{{ url_for('edit_album', slug=album.slug) }}">{{ _('Edit album') }}</a>
+    <form action="{{ url_for('delete_album', slug=album.slug) }}" style="display:inline" method="POST">
+      <input type="submit" class="btn btn-danger" value="{{ _('Delete album') }}" onclick="return confirm('{{ _('Are you sure that you want to permanently delete this album?') }}')">
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

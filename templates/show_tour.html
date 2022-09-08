@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block headline %}Tour "{{ tour.title }}"{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-5">
+    <p><b>{{ _('Title') }}: </b>{{ tour.title }}</p>
+    <p><b>{{ _('Artist') }}: </b>{{ tour.artist }}</p>
+    <p><b>{{ _('Description') }}: </b>{{ tour.description }}</p>
+    <p><b>{{ _('Genre') }}: </b>{{ tour.genre }}</p>
+    <p><b>{{ _('Start date') }}: </b>{{ tour.start_date | date_format }}</p>
+    <p><b>{{ _('End date') }}: </b>{{ tour.end_date | date_format }}</p>
+    {% if current_user.is_tour_owner(tour) %}
+    <a class="btn btn-info" href="{{ url_for('edit_tour', slug=tour.slug) }}">{{ _('Edit tour') }}</a>
+    <form action="{{ url_for('delete_tour', slug=tour.slug) }}" style="display:inline" method="POST">
+      <input type="submit" class="btn btn-danger" value="{{ _('Delete tour') }}" onclick="return confirm('{{ _('Are you sure that you want to permanently delete this tour?') }}')">
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
