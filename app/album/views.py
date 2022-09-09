@@ -1,5 +1,5 @@
 # Imports from Flask
-from flask import render_template, send_from_directory, flash, abort, url_for, redirect
+from flask import render_template, send_from_directory, flash, abort, url_for, redirect, Blueprint
 
 # Extension for implementing Flask-Login for authentication
 from flask_login import current_user, login_required
@@ -23,18 +23,20 @@ from app.album.forms import CreateAlbumForm, UpdateAlbumForm
 from app import app, db
 from app.models import Album
 
+album = Blueprint("album", __name__, template_folder="templates")
+
 # Route for listing albums
-@app.route("/album")
+@album.route("/")
 @login_required
-def list_albums():
+def list():
     albums = Album.query.all()
     return render_template("list_albums.html", albums=albums)
 
 
 # Route for creating new albums
-@app.route("/album/create", methods=["GET", "POST"])
+@album.route("/create", methods=["GET", "POST"])
 @login_required
-def create_album():
+def create():
     form = CreateAlbumForm()
 
     if form.validate_on_submit():
@@ -51,22 +53,22 @@ def create_album():
         db.session.add(album)
         db.session.commit()
         flash(_("The new album has been added."), "success")
-        return redirect(url_for("show_album", slug=album.slug))
+        return redirect(url_for("album.show", slug=album.slug))
 
     return render_template("create_album.html", form=form)
 
 
 # Route for updating an album
-@app.route("/album/edit/<slug>", methods=["GET", "POST"])
+@album.route("/edit/<slug>", methods=["GET", "POST"])
 @login_required
-def edit_album(slug):
+def edit(slug):
     form = UpdateAlbumForm()
 
     album = Album.query.filter_by(slug=slug).first()
 
     if not album or not current_user.is_album_owner(album):
         flash(_("You are not authorized to do this."), "danger")
-        return redirect(url_for("home"))
+        return redirect(url_for("main.home"))
 
     if form.validate_on_submit():
         title = form.title.data
@@ -82,7 +84,7 @@ def edit_album(slug):
         db.session.add(album)
         db.session.commit()
         flash(_("The album has been updated."), "success")
-        return redirect(url_for("show_album", slug=album.slug))
+        return redirect(url_for("album.show", slug=album.slug))
 
     form.title.data = album.title
     form.artist.data = album.artist
@@ -92,23 +94,23 @@ def edit_album(slug):
 
 
 # Route for deleting an album
-@app.route("/album/delete/<slug>", methods=["POST"])
+@album.route("/delete/<slug>", methods=["POST"])
 @login_required
-def delete_album(slug):
+def delete(slug):
     album = Album.query.filter_by(slug=slug).first()
     if not album or not current_user.is_album_owner(album):
         flash("You are not authorized to do this.", "danger")
-        return redirect(url_for("home"))
+        return redirect(url_for("main.home"))
     db.session.delete(album)
     db.session.commit()
     flash(_("The album has been deleted."), "success")
-    return redirect(url_for("home"))
+    return redirect(url_for("main.home"))
 
 
 # Route for showing an album
-@app.route("/album/show/<slug>")
+@album.route("/show/<slug>")
 @login_required
-def show_album(slug):
+def show(slug):
     album = Album.query.filter_by(slug=slug).first()
     if not album:
         abort(404)
@@ -116,7 +118,7 @@ def show_album(slug):
 
 
 # Route for showing the uploaded images
-@app.route("/album/uploads/<filename>")
+@album.route("/uploads/<filename>")
 def uploads(filename):
     return send_from_directory(app.config["IMAGE_UPLOADS"], filename)
 

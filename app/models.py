@@ -4,6 +4,9 @@ from sqlalchemy import event
 # Extension for implementing Flask-Login for authentication
 from flask_login import UserMixin
 
+# Methods from Werkzeug for managing password hashing and sanitizing filenames
+from werkzeug.security import generate_password_hash, check_password_hash
+
 # Package for creating slugs
 from slugify import slugify
 

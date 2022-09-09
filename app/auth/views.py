@@ -1,5 +1,5 @@
 # Imports from flask
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, Blueprint
 # Extension for implementing Flask-Login for authentication
 from flask_login import login_required, current_user, login_user, logout_user
 # Extension for implementing translations
@@ -11,11 +11,13 @@ from app.models import User
 
 from app.auth.forms import RegistrationForm, LoginForm
 
+auth = Blueprint("auth", __name__, template_folder="templates")
+
 # Route for registration
-@app.route("/register", methods=["GET", "POST"])
+@auth.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for("home"))
+        return redirect(url_for("main.home"))
     form = RegistrationForm()
 
     if form.validate_on_submit():
@@ -29,32 +31,32 @@ def register():
         db.session.commit()
         flash(_("You are registered."), "success")
         login_user(user)
-        return redirect(url_for("home"))
+        return redirect(url_for("main.home"))
 
     return render_template("register.html", form=form)
 
 
 # Login route
-@app.route("/login", methods=["GET", "POST"])
+@auth.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("home"))
+        return redirect(url_for("main.home"))
 
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
             flash(_("Invalid username or password"))
-            return redirect(url_for("login"))
+            return redirect(url_for("auth.login"))
         login_user(user, remember=form.remember_me.data)
-        return redirect(url_for("home"))
+        return redirect(url_for("main.home"))
 
     return render_template("login.html", form=form)
 
 
 # Logout route
-@app.route("/logout")
+@auth.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("home"))
+    return redirect(url_for("main.home"))

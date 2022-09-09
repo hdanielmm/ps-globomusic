@@ -6,7 +6,7 @@
 {% block content %}
 <div class="row">
   <div class="col-lg-7 offset-lg-2 my-5">
-    <form method="POST" action="{{ url_for('login') }}">
+    <form method="POST" action="{{ url_for('auth.login') }}">
       {{ form.csrf_token }}
       {{ error_messages(form.errors) }}
       <div class="form-group">

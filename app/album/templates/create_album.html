@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% block headline %}{{ _('Upload new tour') }}{% endblock %}
+{% block headline %}{{ _('Upload new album') }}{% endblock %}
 {% from '_error_messages.html' import error_messages %}
-{% set active_page = 'new_tour' %}
+{% set active_page = 'new_album' %}
 
 {% block content %}
 <div class="row">
   <div class="col-lg-7 offset-lg-2 my-5">
-    <form method="POST" action="{{ url_for('create_tour') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ url_for('album.create') }}" enctype="multipart/form-data">
       {{ form.csrf_token }}
       {{ error_messages(form.errors) }}
       <div class="form-group">
@@ -26,12 +26,12 @@
         {{ form.genre(class="form-control") }}
       </div>
       <div class="form-group">
-        {{ form.start_date.label }}<br>
-        {{ form.start_date }}
+        {{ form.image.label }}<br>
+        {{ form.image }}
       </div>
       <div class="form-group">
-        {{ form.end_date.label }}<br>
-        {{ form.end_date }}
+        {{ form.release_date.label }}<br>
+        {{ form.release_date }}
       </div>
       <hr>
       <div class="form-group">

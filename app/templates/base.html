@@ -10,7 +10,7 @@
   </head>
   <body>
     <nav class="navbar navbar-dark sticky-top bg-info flex-md-nowrap p-0">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{{ url_for('home') }}">GloboMusic</a>
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{{ url_for('main.home') }}">GloboMusic</a>
       {% if current_user.is_authenticated %}
       <span class="navbar-brand col-sm-3 col-md-3 mr-0">{{ _('You are logged in as') }} {{ current_user.username }}!</span>
       {% endif %}
@@ -23,43 +23,43 @@
             <ul class="nav flex-column">
               {% if current_user.is_anonymous %}
               <li class="nav-item">
-                <a class="nav-link {{ 'active' if active_page == 'home' }}" href="{{ url_for('home') }}">
+                <a class="nav-link {{ 'active' if active_page == 'home' }}" href="{{ url_for('main.home') }}">
                   {{ _('Home') }}
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {{ 'active' if active_page == 'login' }}" href="{{ url_for('login') }}">
+                <a class="nav-link {{ 'active' if active_page == 'login' }}" href="{{ url_for('auth.login') }}">
                   {{ _('Login') }}
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {{ 'active' if active_page == 'register' }}" href="{{ url_for('register') }}">
+                <a class="nav-link {{ 'active' if active_page == 'register' }}" href="{{ url_for('auth.register') }}">
                   {{ _('Register') }}
                 </a>
               </li>
               {% else %}
               <li class="nav-item">
-                <a class="nav-link {{ 'active' if active_page == 'albums' }}" href="{{ url_for('list_albums') }}">
+                <a class="nav-link {{ 'active' if active_page == 'albums' }}" href="{{ url_for('album.list') }}">
                   {{ _('See albums') }}
                 </a>
               </li>
               <li class="nav-item mb-2">
-                <a class="nav-link {{ 'active' if active_page == 'tours' }}" href="{{ url_for('list_tours') }}">
+                <a class="nav-link {{ 'active' if active_page == 'tours' }}" href="{{ url_for('tour.list') }}">
                   {{ _('See tours') }}
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link {{ 'active' if active_page == 'new_album' }}" href="{{ url_for('create_album') }}">
+                <a class="nav-link {{ 'active' if active_page == 'new_album' }}" href="{{ url_for('album.create') }}">
                   {{ _('Upload new album') }}
                 </a>
               </li>
               <li class="nav-item mb-2">
-                <a class="nav-link {{ 'active' if active_page == 'new_tour' }}" href="{{ url_for('create_tour') }}">
+                <a class="nav-link {{ 'active' if active_page == 'new_tour' }}" href="{{ url_for('tour.create') }}">
                   {{ _('Upload new tour') }}
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('logout') }}">
+                <a class="nav-link" href="{{ url_for('auth.logout') }}">
                   {{ _('Logout') }}
                 </a>
               </li>

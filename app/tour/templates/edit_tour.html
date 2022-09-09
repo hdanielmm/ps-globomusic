@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-{% block headline %}{{ _('Update tour information') }} - <a href="{{ url_for('show_tour', slug=tour.slug) }}">{{ tour.title }}</a>{% endblock %}
+{% block headline %}{{ _('Update tour information') }} - <a href="{{ url_for('tour.show', slug=tour.slug) }}">{{ tour.title }}</a>{% endblock %}
 {% from '_error_messages.html' import error_messages %}
 
 {% block content %}
 <div class="row">
   <div class="col-lg-7 offset-lg-2 my-5">
-    <form method="POST" action="{{ url_for('edit_tour', slug=tour.slug) }}">
+    <form method="POST" action="{{ url_for('tour.edit', slug=tour.slug) }}">
       {{ form.csrf_token }}
       {{ error_messages(form.errors) }}
       <div class="form-group">

@@ -40,7 +40,20 @@ login_manager.login_message = _l("You need to be logged in to access this page."
 login_manager.login_message_category = "danger"
 
 # Imports from subpackages (views)
-from app.album import views
-from app.auth import views
-from app.main import views
-from app.tour import views
+from app.album.views import album
+app.register_blueprint(album, url_prefix="/album")
+from app.tour.views import tour
+app.register_blueprint(tour, url_prefix="/tour")
+from app.auth.views import auth
+app.register_blueprint(auth)
+from app.main.views import main
+app.register_blueprint(main)
+
+
+from app.main.views import page_not_found
+app.register_error_handler(404, page_not_found)
+
+# Date formatting Jinja2 filter
+@app.template_filter("date_format")
+def date_format(value, format="%m/%d/%Y"):
+    return value.strftime(format)
