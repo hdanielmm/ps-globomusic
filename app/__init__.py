@@ -20,27 +20,31 @@ def create_app(config_env=app_env):
     # Initializing extensions
     init_extensions(app)
 
+    # Language url prefix
+    lang_list = ",".join(app.config["LANGUAGES"])
+    lang_prefix = f"<any({lang_list}):lang>"
+
     # Imports from subpackages (views)
     with app.app_context():
         from app.album.views import album
 
-        app.register_blueprint(album, url_prefix="/album")
+        app.register_blueprint(album, url_prefix=f"/{lang_prefix}/album")
 
         from app.main.views import main
 
-        app.register_blueprint(main)
+        app.register_blueprint(main, url_prefix=f"/{lang_prefix}")
 
     from app.tour.views import tour
 
-    app.register_blueprint(tour, url_prefix="/tour")
+    app.register_blueprint(tour, url_prefix=f"/{lang_prefix}/tour")
 
     from app.auth.views import auth
 
-    app.register_blueprint(auth)
+    app.register_blueprint(auth, url_prefix=f"/{lang_prefix}")
 
     from app.admin.views import admin
 
-    app.register_blueprint(admin, url_prefix="/admin")
+    app.register_blueprint(admin, url_prefix=f"/{lang_prefix}/admin")
 
     # resource links for admins
     app.config["ADMIN_VIEWS"] = [
@@ -58,5 +62,9 @@ def create_app(config_env=app_env):
     from app.filters import date_format
 
     app.add_template_filter(date_format)
+
+    # Define URL processors
+    from app.url_processors import url_processors
+    app.register_blueprint(url_processors)
 
     return app

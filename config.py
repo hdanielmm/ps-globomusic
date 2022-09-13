@@ -7,6 +7,7 @@ class Config:
     ALLOWED_IMAGE_EXTENSIONS = ["jpeg", "jpg", "png"]
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ADMIN_VIEWS = []
+    LANGUAGES = ["en", "hr"]
 
 class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "globomantics.sqlite")
