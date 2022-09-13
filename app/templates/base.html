@@ -74,6 +74,23 @@
               </li>
               {% endif %}
             </ul>
+
+            {% if request.endpoint %}
+              <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                <span>Translate</span>
+              </h6>
+              <ul class="nav flex-column">
+                {% for language in config['LANGUAGES'] %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for(request.endpoint, **dict(request.view_args, lang=language)) }}">
+                    {{ language }}
+                    {% if g.lang == language %}<span class="badge badge-info">Current</span>{% endif %}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+
           </div>
         </nav>
 

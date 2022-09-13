@@ -25,6 +25,9 @@ def create_app(config_env=app_env):
     lang_prefix = f"<any({lang_list}):lang>"
 
     # Imports from subpackages (views)
+    from app.main.views import root
+    app.add_url_rule("/", view_func=root)
+    
     with app.app_context():
         from app.album.views import album
 
