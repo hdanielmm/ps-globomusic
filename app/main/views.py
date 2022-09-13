@@ -1,8 +1,6 @@
 # Imports from Flask
-from flask import render_template, Blueprint
+from flask import Blueprint, current_app, render_template
 
-# Imports from the app package
-from app import app
 
 main = Blueprint("main", __name__, template_folder="templates")
 
@@ -10,8 +8,3 @@ main = Blueprint("main", __name__, template_folder="templates")
 @main.route("/")
 def home():
     return render_template("home.html")
-
-
-# 404 error handler
-def page_not_found(e):
-    return render_template("errors/404.html")

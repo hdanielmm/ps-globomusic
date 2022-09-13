@@ -27,9 +27,7 @@ class Album(db.Model):
     genre = db.Column(db.String(255), nullable=False)
     image = db.Column(db.Text(), nullable=False)
     release_date = db.Column(db.DateTime(), nullable=False)
-    user_id = db.Column(
-        db.Integer(), db.ForeignKey("users.id"), index=True, nullable=False
-    )
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"), index=True, nullable=False)
     slug = db.Column(db.String(255), nullable=False, unique=True)
 
     def __init__(self, title, artist, description, genre, image, release_date, user_id):
@@ -53,14 +51,10 @@ class Tour(db.Model):
     genre = db.Column(db.String(255), nullable=False)
     start_date = db.Column(db.DateTime(), nullable=False)
     end_date = db.Column(db.DateTime(), nullable=False)
-    user_id = db.Column(
-        db.Integer(), db.ForeignKey("users.id"), index=True, nullable=False
-    )
+    user_id = db.Column(db.Integer(), db.ForeignKey("users.id"), index=True, nullable=False)
     slug = db.Column(db.String(255), nullable=False, unique=True)
 
-    def __init__(
-        self, title, artist, description, genre, start_date, end_date, user_id
-    ):
+    def __init__(self, title, artist, description, genre, start_date, end_date, user_id):
         self.title = title
         self.artist = artist
         self.description = description
@@ -87,17 +81,15 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(64), unique=True, index=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    albums = db.relationship(
-        "Album", backref="user", lazy="dynamic", cascade="all, delete-orphan"
-    )
-    tours = db.relationship(
-        "Tour", backref="user", lazy="dynamic", cascade="all, delete-orphan"
-    )
+    albums = db.relationship("Album", backref="user", lazy="dynamic", cascade="all, delete-orphan")
+    tours = db.relationship("Tour", backref="user", lazy="dynamic", cascade="all, delete-orphan")
+    is_admin = db.Column(db.Boolean(), default=False)
 
     def __init__(self, username="", email="", password=""):
         self.username = username
         self.email = email
         self.password_hash = generate_password_hash(password)
+        self.is_admin = False
 
     def __repr__(self):
         return "<User %r>" % self.username
@@ -113,6 +105,9 @@ class User(UserMixin, db.Model):
 
     def is_tour_owner(self, tour):
         return self.id == tour.user_id
+
+    def make_admin(self):
+        self.is_admin = True
 
 
 @login_manager.user_loader

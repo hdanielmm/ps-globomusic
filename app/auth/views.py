@@ -6,7 +6,7 @@ from flask_login import login_required, current_user, login_user, logout_user
 from flask_babel import _
 from flask_babel import lazy_gettext as _l
 # Imports from the app package
-from app import app, db
+from app import db
 from app.models import User
 
 from app.auth.forms import RegistrationForm, LoginForm

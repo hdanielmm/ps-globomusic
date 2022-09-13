@@ -1,59 +1,62 @@
 # Imports from Flask
 from flask import Flask
 
-# Extension for implementing Alembic database migrations
-from flask_migrate import Migrate
-
-# Extension for implementing SQLAlchemy ORM
-from flask_sqlalchemy import SQLAlchemy
-
-# Extension for implementing Flask-Login for authentication
-from flask_login import LoginManager
-
-# Extension for implementing translations
-from flask_babel import Babel, _
-from flask_babel import lazy_gettext as _l
-
 # Other imports
 import os
+import config
+import re
+
+# Import global extension variables
+from app.extensions import *
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-
-app = Flask(__name__)
-app.config.from_mapping(
-    SECRET_KEY=os.environ.get("FLASK_SECRET_KEY") or "prc9FWjeLYh_KsPGm0vJcg",
-    SQLALCHEMY_DATABASE_URI="sqlite:///" + os.path.join(basedir, "globomantics.sqlite"),
-    SQLALCHEMY_TRACK_MODIFICATIONS=False,
-    MAX_CONTENT_LENGTH=16 * 1024 * 1024,
-    IMAGE_UPLOADS=os.path.join(basedir, "uploads"),
-    ALLOWED_IMAGE_EXTENSIONS=["jpeg", "jpg", "png"],
-)
-
-# Initializing extensions
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-babel = Babel(app)
-login_manager = LoginManager(app)
-login_manager.login_view = "login"
-login_manager.session_protection = "strong"
-login_manager.login_message = _l("You need to be logged in to access this page.")
-login_manager.login_message_category = "danger"
-
-# Imports from subpackages (views)
-from app.album.views import album
-app.register_blueprint(album, url_prefix="/album")
-from app.tour.views import tour
-app.register_blueprint(tour, url_prefix="/tour")
-from app.auth.views import auth
-app.register_blueprint(auth)
-from app.main.views import main
-app.register_blueprint(main)
+app_env = os.environ.get("FLASK_ENV")
 
 
-from app.main.views import page_not_found
-app.register_error_handler(404, page_not_found)
+def create_app(config_env=app_env):
+    app = Flask(__name__)
+    app.config.from_object("config.{}Config".format(config_env.capitalize()))
 
-# Date formatting Jinja2 filter
-@app.template_filter("date_format")
-def date_format(value, format="%m/%d/%Y"):
-    return value.strftime(format)
+    # Initializing extensions
+    init_extensions(app)
+
+    # Imports from subpackages (views)
+    with app.app_context():
+        from app.album.views import album
+
+        app.register_blueprint(album, url_prefix="/album")
+
+        from app.main.views import main
+
+        app.register_blueprint(main)
+
+    from app.tour.views import tour
+
+    app.register_blueprint(tour, url_prefix="/tour")
+
+    from app.auth.views import auth
+
+    app.register_blueprint(auth)
+
+    from app.admin.views import admin
+
+    app.register_blueprint(admin, url_prefix="/admin")
+
+    # resource links for admins
+    app.config["ADMIN_VIEWS"] = [
+        re.search("admin.(.*)_table", p).group(1)
+        for p in list(app.view_functions.keys())
+        if re.search("admin.(.*)_table", p)
+    ]
+
+    # Imports for errors pages
+    from app.errors import page_not_found
+
+    app.register_error_handler(404, page_not_found)
+
+    # Imports for Jinja filters
+    from app.filters import date_format
+
+    app.add_template_filter(date_format)
+
+    return app

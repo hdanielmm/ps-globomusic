@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block headline %}Table of {{ resource_name }}{% endblock %}
+{% set active_page = 'admin_' + resource_name %}
+{% block content %}
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped">
+        <tr>
+            {% for col in columns %}
+            <td>
+                <b>{{ col | capitalize }}</b>
+            </td>
+            {% endfor %}
+        </tr>
+        {% for ins in instances %}
+        <tr>
+            {% for col in columns %}
+            <td>
+                {{ ins[col] }}
+                {% if col == "id" %}
+                {% if edit_allowed %}
+                <a class="btn btn-sm btn-info d-block mt-1"
+                    href="{{ url_for('admin.{}'.format(resource_name), resource_id=ins.id) }}">Edit item</a>
+                {% endif %}
+                <form class="delete-form" action="{{ url_for('admin.{}'.format(resource_name), resource_id=ins.id) }}"
+                    method="DELETE">
+                    <input class="btn btn-sm btn-danger mt-2" type="submit" value="Delete item">
+                </form>
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+    $(function () {
+        $(".delete-form").submit(function (event) {
+            event.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: form.attr("action"),
+                type: form.attr("method")
+            });
+            $(this).closest("tr").fadeOut(300);
+        });
+    });
+</script>
+{% endblock %}

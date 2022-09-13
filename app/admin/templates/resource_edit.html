@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block headline %}Update {{ resource_name }}{% endblock %}
+{% from '_error_messages.html' import error_messages %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-7 offset-lg-2 my-5">
+    <form method="POST" action="{{ url_for('admin.{}'.format(resource_name), resource_id=model_instance.id) }}">
+      {{ form.csrf_token }}
+      {{ error_messages(form.errors) }}
+      {% for field in parameters %}
+      <div class="form-group">
+        {{ form[field].label }}
+        {{ form[field](class="form-control") }}
+      </div>
+      {% endfor %}
+      <hr>
+      <div class="form-group">
+        {{ form.submit(class="btn btn-primary form-control") }}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

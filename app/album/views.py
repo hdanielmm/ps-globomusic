@@ -1,5 +1,5 @@
 # Imports from Flask
-from flask import render_template, send_from_directory, flash, abort, url_for, redirect, Blueprint
+from flask import abort, Blueprint, current_app, flash, redirect, render_template, send_from_directory, url_for
 
 # Extension for implementing Flask-Login for authentication
 from flask_login import current_user, login_required
@@ -20,7 +20,7 @@ import datetime
 from app.album.forms import CreateAlbumForm, UpdateAlbumForm
 
 # Imports from app package
-from app import app, db
+from app import db
 from app.models import Album
 
 album = Blueprint("album", __name__, template_folder="templates")
@@ -120,7 +120,7 @@ def show(slug):
 # Route for showing the uploaded images
 @album.route("/uploads/<filename>")
 def uploads(filename):
-    return send_from_directory(app.config["IMAGE_UPLOADS"], filename)
+    return send_from_directory(current_app.config["IMAGE_UPLOADS"], filename)
 
 
 # Method for saving an uploaded image to the uploads directory
@@ -130,5 +130,5 @@ def save_image_upload(image):
     random_string = token_hex(2)
     filename = random_string + "_" + now + "_" + image.data.filename
     filename = secure_filename(filename)
-    image.data.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
+    image.data.save(os.path.join(current_app.config["IMAGE_UPLOADS"], filename))
     return filename
