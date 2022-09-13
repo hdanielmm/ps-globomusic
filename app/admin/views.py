@@ -7,6 +7,7 @@ from app import db
 from flask_login import login_required, current_user
 from functools import wraps
 from flask_babel import _
+from app.signals import admin_deleted
 
 
 def admin_required(f):
@@ -84,6 +85,12 @@ class ModifyResourceView(MethodView):
 
     def delete(self, resource_id):
         model_instance = self.get_model_instance(resource_id)
+        # admin_deleted.send(
+        #     current_app._get_current_object(),
+        #     a_name = current_user.username,
+        #     r_name = self.resource_name,
+        #     r_id = resource_id
+        # )
         db.session.delete(model_instance)
         db.session.commit()
         return ""

@@ -9,6 +9,8 @@ import re
 # Import global extension variables
 from app.extensions import *
 
+from app.signals import register_signals
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 app_env = os.environ.get("FLASK_ENV")
 
@@ -20,6 +22,9 @@ def create_app(config_env=app_env):
     # Initializing extensions
     init_extensions(app)
 
+    # Registering signals
+    register_signals(app)
+
     # Language url prefix
     lang_list = ",".join(app.config["LANGUAGES"])
     lang_prefix = f"<any({lang_list}):lang>"
@@ -27,7 +32,7 @@ def create_app(config_env=app_env):
     # Imports from subpackages (views)
     from app.main.views import root
     app.add_url_rule("/", view_func=root)
-    
+
     with app.app_context():
         from app.album.views import album
 
