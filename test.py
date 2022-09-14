@@ -22,7 +22,7 @@ class TestExample(unittest.TestCase):
 
     def test_home_routes(self):
         resp = self.app_test_client.get("/")
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 302)
 
     def test_user_creation(self):
         u = User(username="test", email="tet@gmail.com")

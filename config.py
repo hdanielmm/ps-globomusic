@@ -9,6 +9,11 @@ class Config:
     ADMIN_VIEWS = []
     LANGUAGES = ["en", "hr"]
 
+CACHE_TYPE = "redis"
+CACHE_REDIS_HOST = "localhost"
+CACHE_REDIS_PORT = "6379"
+CACHE_REDIS_DB = "0"
+
 class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "globomantics.sqlite")
     IMAGE_UPLOADS = os.path.join(basedir, "uploads")

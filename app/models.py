@@ -14,7 +14,7 @@ from slugify import slugify
 from secrets import token_urlsafe
 
 # Imports from the app package
-from app import db, login_manager
+from app import db, login_manager, cache
 
 # Album SQLAlchemy model
 class Album(db.Model):
@@ -100,7 +100,12 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    @cache.memoize(timeout=180)
     def is_album_owner(self, album):
+        # print("Checked {} against {}".format(
+        #     self.username,
+        #     album.title
+        # ))
         return self.id == album.user_id
 
     def is_tour_owner(self, tour):
